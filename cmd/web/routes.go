@@ -1,9 +1,17 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
 
-func (app *application) routes() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", app.home)
-	return mux
+	"github.com/bmizerany/pat"
+	"github.com/justinas/alice"
+)
+
+func (app *application) routes() http.Handler {
+	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
+	mux := pat.New()
+	mux.Get("/", http.HandlerFunc(app.home))
+	mux.Get("/full/:id", http.HandlerFunc(app.getFullURL))
+
+	return standardMiddleware.Then(mux)
 }
