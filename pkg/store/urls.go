@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	valid "github.com/asaskevich/govalidator"
@@ -17,6 +18,11 @@ var ErrInvalidURL = errors.New("URL provided is invalid")
 // ErrInvalidShortcode is returned when the shortcode provided by a user
 // does not exist in the db
 var ErrInvalidShortcode = errors.New("URL Shortcode entry does not exist")
+
+func isValidURL(str string) bool {
+	u, err := url.Parse(str)
+	return err == nil && u.Scheme != "" && u.Host != ""
+}
 
 // ShortenURL given a url, validates the URL, stores it then
 // returns a shortcode which can be used as a shortened version
