@@ -3,6 +3,7 @@ module github.com/nagamocha3000/yaurlsigl
 go 1.13
 
 require (
+	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40
 	github.com/boltdb/bolt v1.3.1
 	github.com/justinas/alice v1.2.0

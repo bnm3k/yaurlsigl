@@ -2,8 +2,9 @@ package store
 
 import (
 	"fmt"
-	"net/url"
+	"strings"
 
+	valid "github.com/asaskevich/govalidator"
 	"github.com/boltdb/bolt"
 	"github.com/pkg/errors"
 	"github.com/teris-io/shortid"
@@ -17,27 +18,16 @@ var ErrInvalidURL = errors.New("URL provided is invalid")
 // does not exist in the db
 var ErrInvalidShortcode = errors.New("URL Shortcode entry does not exist")
 
-func put(db *bolt.DB, key, val []byte) error {
-	err := db.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("foo"))
-		if err != nil {
-			return errors.Wrap(err, "Creating bucket failed")
-		}
-		err = b.Put(key, val)
-		return err
-	})
-	return err
-}
-
 // ShortenURL given a url, validates the URL, stores it then
 // returns a shortcode which can be used as a shortened version
 // of the URL
 func (s *Store) ShortenURL(fullURL string) (shortened string, err error) {
 	//validate URL
-	_, err = url.ParseRequestURI(fullURL)
-	if err != nil {
+	fullURL = strings.Trim(fullURL, " ")
+	if valid.IsURL(fullURL) == false {
 		return "", ErrInvalidURL
 	}
+
 	//generate shortcode
 	shortcode, err := shortid.Generate()
 	if err != nil {

@@ -29,11 +29,11 @@ func TestShortenThenRetrieveURL(t *testing.T) {
 	// shorten
 	originalURL := "https://golang.org/"
 	shortcode, err := store.ShortenURL(originalURL)
-	require.NoError(t, err, "Unable to shorten URL: ", originalURL)
+	require.NoErrorf(t, err, "Unable to shorten URL '%s'", originalURL)
 
 	// get full
 	retrievedURL, err := store.GetFullURL(shortcode)
-	require.NoError(t, err, "Unable to get full URL for shortcode: ", shortcode)
+	require.NoErrorf(t, err, "Unable to get full URL for shortcode: '%s'", shortcode)
 
 	// check that they match
 	require.Equal(t, originalURL, retrievedURL)
