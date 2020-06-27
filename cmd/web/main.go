@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/boltdb/bolt"
 	"github.com/nagamocha3000/yaurlsigl/pkg/store"
 	"github.com/pkg/errors"
 )
@@ -39,20 +38,8 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	// db
-	db, err := bolt.Open(cfg.DBPath, 0600, nil)
-	if err != nil {
-		errorLog.Fatal(errors.Wrapf(err, "unable to open db: %s", cfg.DBPath))
-	}
-	defer func() {
-		err := db.Close()
-		if err != nil {
-			errorLog.Fatal(errors.Wrapf(err, "Error on db close:"))
-		}
-	}()
-
 	// store
-	store, err := store.NewStore(db, infoLog, errorLog)
+	store, err := store.NewStore(cfg.DBPath)
 	if err != nil {
 		errorLog.Fatal(errors.Wrapf(err, "Error on store init"))
 	}
