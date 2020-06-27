@@ -44,10 +44,18 @@ func main() {
 	if err != nil {
 		errorLog.Fatal(errors.Wrapf(err, "unable to open db: %s", cfg.DBPath))
 	}
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			errorLog.Fatal(errors.Wrapf(err, "Error on db close:"))
+		}
+	}()
 
 	// store
-	store := store.NewStore(db, infoLog, errorLog)
+	store, err := store.NewStore(db, infoLog, errorLog)
+	if err != nil {
+		errorLog.Fatal(errors.Wrapf(err, "Error on store init"))
+	}
 
 	// application
 	app := &application{
